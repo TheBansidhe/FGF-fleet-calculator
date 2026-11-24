@@ -28,7 +28,7 @@ button{font-weight:700}
 </head>
 <body>
 <div class="w">
-<h1>FGF Space Fleet Optimizer</h1>
+<h1>FGF Space Fleet Optimizer (v3)</h1>
 <div class="b">
   <div class="r">
     <select id="ship" onchange="calc()">
@@ -60,68 +60,51 @@ button{font-weight:700}
 <div class="gr" id="ls"></div>
 </div>
 <script>
-const C=[["Green",.85],["Blue",1],["Purple",1.22],["Yellow",1.48],["Orange",1.78],["Red",2.12],["Rainbow",2.5]];
-const P=[["1★",1],["2★",1.05],["3★",1.1],["4★",1.15],["5★",1.22]];
-const D=[
-["teresa","Teresa Lopez","Beam","Leg","INT","Def/Heal",3,108,35],
-["evan","Evan Rogers","Beam","Leg","ATK","DPS Carry",3,105,0],
-["aliya","Aliya","Beam","Leg","ATK","Slot-1 Buff",1,100,8],
-["ramos","Ramos Moai (S2)","Beam","Leg","ATK","Atk/Supp",2,104,10],
-["doug","Doug Rockwell","Beam","Leg","INT","Healer",3,94,32],
-["lucius","Lucius Pullo","Beam","Epic","ATK","Budget DPS",2,74,0],
-["klara","Klara","Beam","Epic","INT","Budget Heal",3,72,22],
-["ajita","Ajita","Ion","Leg","INT","Supp/Heal",1,110,34],
-["lily","Lily","Ion","Leg","ATK","DPS Carry",3,112,0],
-["jodie","Jodie Béart","Ion","Leg","ATK","Setup/Buff",1,102,6],
-["kama","Kama Moai","Ion","Epic","INT","Budget DPS",2,76,0],
-["phade","Phade","Ion","Epic","INT","Budget Supp",1,70,18],
-["zora","Zora Domini","Kinetic","Leg","INT","DPS Carry",3,114,5],
-["bee","Killer Bee","Kinetic","Leg","ATK","DPS/Sustain",2,106,14],
-["eva","Eva von Trier","Kinetic","Leg","INT","Setup/Debuff",1,104,10],
-["cocoon","Cocoon","Kinetic","Leg","INT","Def/Shield",2,98,36],
-["riian","Riian Dessos","Kinetic","Epic","ATK","Budget DPS",2,73,0],
-["lani","Lani Verita","Kinetic","Epic","ATK","Budget Atk",2,71,0],
-["s2","S2 Banner Hero","Kinetic","Leg","ATK","Custom S2",2,108,12]
-];
+const C_NAME="Green,Blue,Purple,Yellow,Orange,Red,Rainbow".split(",");
+const C_MULT="0.85,1,1.22,1.48,1.78,2.12,2.5".split(",").map(Number);
+const P_NAME="1★,2★,3★,4★,5★".split(",");
+const P_MULT="1,1.06,1.12,1.18,1.26".split(",").map(Number);
+const RAW="teresa|Teresa Lopez|Beam|Leg|INT|Def/Heal|3|108|35;evan|Evan Rogers|Beam|Leg|ATK|DPS Carry|3|105|0;aliya|Aliya|Beam|Leg|ATK|Slot-1 Buff|1|100|8;ramos|Ramos Moai (S2)|Beam|Leg|ATK|Atk/Supp|2|104|10;doug|Doug Rockwell|Beam|Leg|INT|Healer|3|94|32;lucius|Lucius Pullo|Beam|Epic|ATK|Budget DPS|2|74|0;klara|Klara|Beam|Epic|INT|Budget Heal|3|72|22;ajita|Ajita|Ion|Leg|INT|Supp/Heal|1|110|34;lily|Lily|Ion|Leg|ATK|DPS Carry|3|112|0;jodie|Jodie Béart|Ion|Leg|ATK|Setup/Buff|1|102|6;kama|Kama Moai|Ion|Epic|INT|Budget DPS|2|76|0;phade|Phade|Ion|Epic|INT|Budget Supp|1|70|18;zora|Zora Domini|Kinetic|Leg|INT|DPS Carry|3|114|5;bee|Killer Bee|Kinetic|Leg|ATK|DPS/Sustain|2|106|14;eva|Eva von Trier|Kinetic|Leg|INT|Setup/Debuff|1|104|10;cocoon|Cocoon|Kinetic|Leg|INT|Def/Shield|2|98|36;riian|Riian Dessos|Kinetic|Epic|ATK|Budget DPS|2|73|0;lani|Lani Verita|Kinetic|Epic|ATK|Budget Atk|2|71|0;s2|S2 Banner Hero|Kinetic|Leg|ATK|Custom S2|2|108|12";
+const D=RAW.split(";").map(r=>{let a=r.split("|");return{id:a.at(0),nm:a.at(1),tp:a.at(2),rr:a.at(3),st:a.at(4),rl:a.at(5),sl:+a.at(6),pw:+a.at(7),sb:+a.at(8)};});
 let S={},F="All";
-D.forEach(x=>S[x[0]]={o:x[3]=="Epic",c:x[3]=="Epic"?2:3,p:2,s:[8,6,5,1],t:x[2]});
+D.forEach(x=>{S[x.id]={o:x.rr=="Epic",c:x.rr=="Epic"?2:3,p:2,s1:8,s2:6,s3:5,s4:1,t:x.tp};});
+function setV(id,k,v){S[id][k]=v;if(k=="o"||k=="t")draw();calc();}
 function draw(){
   let h="";
   D.forEach(x=>{
-    let s=S[x[0]],tp=x[0]=="s2"?s.t:x[2],p=s.p||0;
+    let s=S[x.id],tp=x.id=="s2"?s.t:x.tp,p=s.p||0;
     if(F!="All"&&tp!=F)return;
-    let co=C.map((v,i)=>'<option value="'+i+'"'+(s.c==i?' selected':'')+'>'+v[0]+'</option>').join("");
-    let po=P.map((v,i)=>'<option value="'+i+'"'+(p==i?' selected':'')+'>'+v[0]+'</option>').join("");
-    let cs=x[0]=="s2"?'<select style="width:100%;margin-bottom:5px" onchange="S.s2.t=this.value;draw();calc()"><option'+(s.t=="Beam"?" selected":"")+'>Beam</option><option'+(s.t=="Ion"?" selected":"")+'>Ion</option><option'+(s.t=="Kinetic"?" selected":"")+'>Kinetic</option></select>':'';
-    let sk=[0,1,2,3].map(i=>'<div>S'+(i+1)+'<input type="number" min="0" max="20" value="'+s.s[i]+'" onchange="S[\''+x[0]+'\'].s['+i+']=+this.value;calc()"></div>').join("");
-    h+='<div class="c'+(s.o?' on':'')+'"><div class="r" style="justify-content:space-between"><b><input type="checkbox"'+(s.o?' checked':'')+' onchange="S[\''+x[0]+'\'].o=this.checked;draw();calc()"> '+x[1]+'</b><span class="tg '+tp+'">'+tp+'</span></div><div style="font-size:.74rem;color:#8f9ec2;margin-bottom:5px">'+x[3]+' • '+x[4]+' • '+x[5]+'</div>'+cs+'<div class="tr"><select onchange="S[\''+x[0]+'\'].c=+this.value;calc()">'+co+'</select><select onchange="S[\''+x[0]+'\'].p=+this.value;calc()">'+po+'</select></div><div class="sk">'+sk+'</div></div>';
+    let co=C_NAME.map((v,i)=>'<option value="'+i+'"'+(s.c==i?' selected':'')+'>'+v+'</option>').join("");
+    let po=P_NAME.map((v,i)=>'<option value="'+i+'"'+(p==i?' selected':'')+'>'+v+'</option>').join("");
+    let cs=x.id=="s2"?'<select style="width:100%;margin-bottom:5px" onchange="setV(\'s2\',\'t\',this.value)"><option'+(s.t=="Beam"?" selected":"")+'>Beam</option><option'+(s.t=="Ion"?" selected":"")+'>Ion</option><option'+(s.t=="Kinetic"?" selected":"")+'>Kinetic</option></select>':'';
+    h+='<div class="c'+(s.o?' on':'')+'"><div class="r" style="justify-content:space-between"><b><input type="checkbox"'+(s.o?' checked':'')+' onchange="setV(\''+x.id+'\',\'o\',this.checked)"> '+x.nm+'</b><span class="tg '+tp+'">'+tp+'</span></div><div style="font-size:.74rem;color:#8f9ec2;margin-bottom:5px">'+x.rr+' • '+x.st+' • '+x.rl+'</div>'+cs+'<div class="tr"><select onchange="setV(\''+x.id+'\',\'c\',+this.value)">'+co+'</select><select onchange="setV(\''+x.id+'\',\'p\',+this.value)">'+po+'</select></div><div class="sk"><div>S1<input type="number" min="1" max="20" value="'+s.s1+'" onchange="setV(\''+x.id+'\',\'s1\',+this.value)"></div><div>S2<input type="number" min="1" max="20" value="'+s.s2+'" onchange="setV(\''+x.id+'\',\'s2\',+this.value)"></div><div>S3<input type="number" min="1" max="20" value="'+s.s3+'" onchange="setV(\''+x.id+'\',\'s3\',+this.value)"></div><div>S4<input type="number" min="0" max="20" value="'+s.s4+'" onchange="setV(\''+x.id+'\',\'s4\',+this.value)"></div></div></div>';
   });
   ls.innerHTML=h;
 }
 function calc(){
   let h="";
-  ["Beam","Ion","Kinetic"].forEach(tp=>{
+  "Beam,Ion,Kinetic".split(",").forEach(tp=>{
     let pk=D.map(x=>{
-      let s=S[x[0]],ct=x[0]=="s2"?s.t:x[2],p=s.p||0;
+      let s=S[x.id],ct=x.id=="s2"?s.t:x.tp,p=s.p||0;
       if(!s.o)return null;
-      let tm=C[s.c][1]*P[p][1],aw=s.c>=5||(s.c==4&&p==4);
-      let sk=1+(s.s[0]*.45+s.s[1]*.25+s.s[2]*.18+(aw?s.s[3]:s.s[3]*.35)*.12)*.085;
-      let sc=x[7]*tm*sk+(mode.value=="sustain"?x[8]*tm:x[8]*.25);
-      if(ship.value=="Gram"&&x[4]=="INT")sc*=1.12;
-      if((ship.value=="Opportunity"||ship.value=="Demerzel")&&x[4]=="ATK")sc*=1.12;
+      let tm=C_MULT.at(s.c)*P_MULT.at(p),aw=s.c>=5||(s.c==4&&p==4);
+      let sk=1+(s.s1*.45+s.s2*.25+s.s3*.18+(aw?s.s4:s.s4*.35)*.12)*.085;
+      let sc=x.pw*tm*sk+(mode.value=="sustain"?x.sb*tm:x.sb*.25);
+      if(ship.value=="Gram"&&x.st=="INT")sc*=1.12;
+      if((ship.value=="Opportunity"||ship.value=="Demerzel")&&x.st=="ATK")sc*=1.12;
       if(ct==tp)sc*=1.38;
-      return{x:x,ct:ct,sc:Math.round(sc),lb:C[s.c][0]+" "+P[p][0]};
-    }).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,3).sort((a,b)=>a.x[6]-b.x[6]);
+      return{x:x,ct:ct,sc:Math.round(sc),lb:C_NAME.at(s.c)+" "+P_NAME.at(p)};
+    }).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,3).sort((a,b)=>a.x.sl-b.x.sl);
     let m=pk.filter(v=>v.ct==tp).length,rs=m==3?"+20% Res":m==2?"+10% Res":"0% Res";
-    let sl=pk.length?pk.map((v,i)=>'<div class="sl"><div class="n">'+(i+1)+'</div><div style="flex:1"><b>'+v.x[1]+'</b><div style="font-size:.72rem;color:#8f9ec2">'+v.lb+' • '+v.x[5]+'</div></div><b style="color:#facc15">⚡'+v.sc+'</b></div>').join(""):'<p style="font-size:.8rem;color:#8f9ec2">Select heroes below.</p>';
+    let sl=pk.length?pk.map((v,i)=>'<div class="sl"><div class="n">'+(i+1)+'</div><div style="flex:1"><b>'+v.x.nm+'</b><div style="font-size:.72rem;color:#8f9ec2">'+v.lb+' • '+v.x.rl+'</div></div><b style="color:#facc15">⚡'+v.sc+'</b></div>').join(""):'<p style="font-size:.8rem;color:#8f9ec2">Select heroes below.</p>';
     h+='<div class="f '+tp+'"><div class="r" style="justify-content:space-between;margin:0"><b>'+tp+' Fleet</b><span style="font-size:.74rem;color:#34d399">'+rs+'</span></div>'+sl+'</div>';
   });
   out.innerHTML=h;
 }
 function flt(t,b){F=t;document.querySelectorAll("#tb button").forEach(v=>v.className="");b.className="bl";draw();}
-function pre(p){D.forEach(x=>{if(p=="rst")S[x[0]].o=0;if(p=="f2p"){S[x[0]].o=x[3]=="Epic";S[x[0]].c=3;S[x[0]].p=4;S[x[0]].s=[10,8,8,1];}if(p=="max"){S[x[0]].o=x[0]!="s2";S[x[0]].c=6;S[x[0]].p=4;S[x[0]].s=[15,15,15,15];}});draw();calc();}
-function sv(){localStorage.setItem("fgf3",JSON.stringify({S:S,sh:ship.value,md:mode.value}));alert("Saved!");}
-function ld(n){let d=JSON.parse(localStorage.getItem("fgf3")||"null");if(!d)return;S=d.S;ship.value=d.sh;mode.value=d.md;draw();calc();if(n)alert("Loaded!");}
+function pre(p){D.forEach(x=>{let s=S[x.id];if(p=="rst")s.o=0;if(p=="f2p"){s.o=x.rr=="Epic";s.c=3;s.p=4;s.s1=10;s.s2=8;s.s3=8;s.s4=1;}if(p=="max"){s.o=x.id!="s2";s.c=6;s.p=4;s.s1=15;s.s2=15;s.s3=15;s.s4=15;}});draw();calc();}
+function sv(){localStorage.setItem("fgf4",JSON.stringify({S:S,sh:ship.value,md:mode.value}));alert("Saved!");}
+function ld(n){let d=JSON.parse(localStorage.getItem("fgf4")||"null");if(!d)return;S=d.S;ship.value=d.sh;mode.value=d.md;draw();calc();if(n)alert("Loaded!");}
 ld(0);draw();calc();
 </script>
 </body>
