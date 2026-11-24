@@ -1,146 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FGF Space Fleet Optimizer</title>
+<title>FGF Fleet Optimizer</title>
 <style>
-*{box-sizing:border-box;font-family:system-ui,sans-serif}
-body{margin:0;background:#0b0f19;color:#e8eefc;padding:14px}
-.wrap{max-width:1100px;margin:auto}
-h1{font-size:1.4rem;text-align:center;margin:0 0 6px}
-.sub{color:#8f9ec2;font-size:.88rem;text-align:center;margin:0 0 16px}
-.bar,.card,.fleet{background:#131a2a;border:1px solid #283552;border-radius:12px;padding:12px;margin-bottom:14px}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
-select,button,input{background:#1a2338;color:#e8eefc;border:1px solid #283552;border-radius:8px;padding:7px 10px;font-size:.88rem}
-button{font-weight:700;cursor:pointer}
-.btn-g{background:#059669;border-color:#10b981}.btn-b{background:#2563eb;border-color:#3b82f6}.btn-r{color:#f87171;border-color:#7f1d1d}
-.fleets{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
-.fleet.Beam{border-top:4px solid #38bdf8}.fleet.Ion{border-top:4px solid #c084fc}.fleet.Kinetic{border-top:4px solid #fb923c}
-.slot{display:flex;align-items:center;gap:10px;background:#1a2338;border-radius:8px;padding:8px;margin-top:8px}
-.num{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.card{opacity:.55;margin:0}.card.on{opacity:1;border-color:#475569}
-.tag{font-size:.7rem;padding:2px 6px;border-radius:5px;font-weight:700}
-.Beam .tag,.tag.Beam{background:#0c4a6e;color:#38bdf8}.Ion .tag,.tag.Ion{background:#3b0764;color:#c084fc}.Kinetic .tag,.tag.Kinetic{background:#431407;color:#fb923c}
-.sk{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
-.sk div{text-align:center;font-size:.68rem;color:#8f9ec2}
-.sk input{width:100%;text-align:center;padding:5px 2px;margin-top:2px}
+*{box-sizing:border-box;font-family:sans-serif}
+body{margin:0;background:#0b0f19;color:#e8eefc;padding:12px}
+.w{max-width:1100px;margin:auto}
+h1{font-size:1.3rem;text-align:center;margin:0 0 12px}
+.b,.c,.f{background:#131a2a;border:1px solid #283552;border-radius:10px;padding:10px;margin-bottom:12px}
+.r{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
+select,button,input{background:#1a2338;color:#e8eefc;border:1px solid #283552;border-radius:7px;padding:6px 8px;font-size:.85rem}
+button{font-weight:700}
+.g{background:#059669}.bl{background:#2563eb}.rd{color:#f87171}
+.fl{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.Beam{border-top:4px solid #38bdf8}.Ion{border-top:4px solid #c084fc}.Kinetic{border-top:4px solid #fb923c}
+.sl{display:flex;align-items:center;gap:8px;background:#1a2338;border-radius:7px;padding:7px;margin-top:6px}
+.n{width:24px;height:24px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+.gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.c{opacity:.5;margin:0}.c.on{opacity:1;border-color:#64748b}
+.tg{font-size:.68rem;padding:2px 6px;border-radius:4px;font-weight:700}
+.tg.Beam{background:#0c4a6e;color:#38bdf8}.tg.Ion{background:#3b0764;color:#c084fc}.tg.Kinetic{background:#431407;color:#fb923c}
+.tr{display:grid;grid-template-columns:2fr 1fr;gap:5px}
+.sk{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;text-align:center;font-size:.68rem;color:#8f9ec2}
+.sk input{width:100%;text-align:center;padding:4px 2px;margin-top:2px}
 </style>
 </head>
 <body>
-<div class="wrap">
-<h1>Foundation: Galactic Frontier — Space Fleet Optimizer</h1>
-<p class="sub">Check your owned heroes, set Star Tier & 4 Space Skills, and view your optimal lineups.</p>
-<div class="bar">
-  <div class="row">
+<div class="w">
+<h1>FGF Space Fleet Optimizer</h1>
+<div class="b">
+  <div class="r">
     <select id="ship" onchange="calc()">
-      <option value="Gram">Flagship: Gram (INT/Sustain)</option>
-      <option value="Opportunity">Flagship: Opportunity (ATK/Burst)</option>
-      <option value="Demerzel">Flagship: Demerzel (ATK/PvP)</option>
-      <option value="Gungnir">Flagship: Gungnir (Neutral)</option>
+      <option value="Gram">Flagship: Gram (INT)</option>
+      <option value="Opportunity">Flagship: Opportunity (ATK)</option>
+      <option value="Demerzel">Flagship: Demerzel (ATK)</option>
+      <option value="Gungnir">Flagship: Gungnir (Base)</option>
     </select>
     <select id="mode" onchange="calc()">
-      <option value="dps">Strategy: Max DPS</option>
-      <option value="sustain">Strategy: Balanced / Sustain</option>
+      <option value="dps">Max DPS</option>
+      <option value="sustain">Balanced / Sustain</option>
     </select>
   </div>
-  <div class="row" style="margin:0">
-    <button onclick="preset('f2p')">F2P Starter</button>
-    <button onclick="preset('max')">All Maxed</button>
-    <button class="btn-r" onclick="preset('reset')">Reset All</button>
-    <button class="btn-g" onclick="save()">Save Roster</button>
-    <button onclick="load(1)">Load Saved</button>
+  <div class="r" style="margin:0">
+    <button onclick="pre('f2p')">F2P</button>
+    <button onclick="pre('max')">Max All</button>
+    <button class="rd" onclick="pre('rst')">Reset</button>
+    <button class="g" onclick="sv()">Save</button>
+    <button onclick="ld(1)">Load</button>
   </div>
 </div>
-<div class="fleets" id="out"></div>
-<div class="row" id="tabs">
-  <button class="btn-b" onclick="filt('All',this)">All Champions</button>
-  <button onclick="filt('Beam',this)">Beam</button>
-  <button onclick="filt('Ion',this)">Ion</button>
-  <button onclick="filt('Kinetic',this)">Kinetic</button>
+<div class="fl" id="out"></div>
+<div class="r" id="tb">
+  <button class="bl" onclick="flt('All',this)">All</button>
+  <button onclick="flt('Beam',this)">Beam</button>
+  <button onclick="flt('Ion',this)">Ion</button>
+  <button onclick="flt('Kinetic',this)">Kinetic</button>
 </div>
-<div class="grid" id="list"></div>
+<div class="gr" id="ls"></div>
 </div>
 <script>
-const STARS=[["Blue",1],["Purple",1.18],["Yellow",1.38],["Orange",1.62],["Red (Awakened)",1.92],["Rainbow",2.25]];
-const DATA=[
-["teresa","Teresa Lopez","Beam","Legendary","INT","Defense / Heal",3,108,35],
-["evan","Evan Rogers","Beam","Legendary","ATK","DPS Carry",3,105,0],
-["aliya","Aliya","Beam","Legendary","ATK","Slot-1 Buffer",1,100,8],
-["ramos","Ramos Moai (S2)","Beam","Legendary","ATK","Attack / Support",2,104,10],
-["doug","Doug Rockwell","Beam","Legendary","INT","Fleet Healer",3,94,32],
-["lucius","Lucius Pullo","Beam","Epic","ATK","Budget Attack",2,74,0],
-["klara","Klara","Beam","Epic","INT","Budget Healer",3,72,22],
-["ajita","Ajita","Ion","Legendary","INT","Support / Healer",1,110,34],
-["lily","Lily","Ion","Legendary","ATK","Primary DPS Carry",3,112,0],
-["jodie","Jodie Béart","Ion","Legendary","ATK","Setup / Buffer",1,102,6],
-["kama","Kama Moai","Ion","Epic","INT","Budget INT DPS",2,76,0],
-["phade","Phade","Ion","Epic","INT","Budget Support",1,70,18],
-["zora","Zora Domini","Kinetic","Legendary","INT","Primary DPS Carry",3,114,5],
-["bee","Killer Bee","Kinetic","Legendary","ATK","DPS / Sustain",2,106,14],
-["eva","Eva von Trier","Kinetic","Legendary","INT","Setup / Debuff",1,104,10],
-["cocoon","Cocoon","Kinetic","Legendary","INT","Defense / Shielder",2,98,36],
-["riian","Riian Dessos","Kinetic","Epic","ATK","Budget ATK DPS",2,73,0],
-["lani","Lani Verita","Kinetic","Epic","ATK","Budget Attack",2,71,0],
-["s2new","S2 New Banner Hero","Kinetic","Legendary","ATK","Custom S2 Slot",2,108,12]
+const C=[["Green",.85],["Blue",1],["Purple",1.22],["Yellow",1.48],["Orange",1.78],["Red",2.12],["Rainbow",2.5]];
+const P=[["1★",1],["2★",1.05],["3★",1.1],["4★",1.15],["5★",1.22]];
+const D=[
+["teresa","Teresa Lopez","Beam","Leg","INT","Def/Heal",3,108,35],
+["evan","Evan Rogers","Beam","Leg","ATK","DPS Carry",3,105,0],
+["aliya","Aliya","Beam","Leg","ATK","Slot-1 Buff",1,100,8],
+["ramos","Ramos Moai (S2)","Beam","Leg","ATK","Atk/Supp",2,104,10],
+["doug","Doug Rockwell","Beam","Leg","INT","Healer",3,94,32],
+["lucius","Lucius Pullo","Beam","Epic","ATK","Budget DPS",2,74,0],
+["klara","Klara","Beam","Epic","INT","Budget Heal",3,72,22],
+["ajita","Ajita","Ion","Leg","INT","Supp/Heal",1,110,34],
+["lily","Lily","Ion","Leg","ATK","DPS Carry",3,112,0],
+["jodie","Jodie Béart","Ion","Leg","ATK","Setup/Buff",1,102,6],
+["kama","Kama Moai","Ion","Epic","INT","Budget DPS",2,76,0],
+["phade","Phade","Ion","Epic","INT","Budget Supp",1,70,18],
+["zora","Zora Domini","Kinetic","Leg","INT","DPS Carry",3,114,5],
+["bee","Killer Bee","Kinetic","Leg","ATK","DPS/Sustain",2,106,14],
+["eva","Eva von Trier","Kinetic","Leg","INT","Setup/Debuff",1,104,10],
+["cocoon","Cocoon","Kinetic","Leg","INT","Def/Shield",2,98,36],
+["riian","Riian Dessos","Kinetic","Epic","ATK","Budget DPS",2,73,0],
+["lani","Lani Verita","Kinetic","Epic","ATK","Budget Atk",2,71,0],
+["s2","S2 Banner Hero","Kinetic","Leg","ATK","Custom S2",2,108,12]
 ];
-let st={},cur="All";
-DATA.forEach(c=>st[c[0]]={on:c[3]==="Epic",star:c[3]==="Epic"?1:2,s:[8,6,5,1],ct:c[2]});
+let S={},F="All";
+D.forEach(x=>S[x[0]]={o:x[3]=="Epic",c:x[3]=="Epic"?2:3,p:2,s:[8,6,5,1],t:x[2]});
 function draw(){
-  const el=document.getElementById("list");el.innerHTML="";
-  DATA.forEach(c=>{
-    const s=st[c[0]],tp=c[0]==="s2new"?s.ct:c[2];
-    if(cur!=="All"&&tp!==cur)return;
-    el.innerHTML+=`<div class="card ${s.on?'on':''}">
-      <div class="row" style="justify-content:space-between">
-        <label style="font-weight:700"><input type="checkbox" ${s.on?'checked':''} onchange="st['${c[0]}'].on=this.checked;draw();calc()"> ${c[1]}</label>
-        <span class="tag ${tp}">${tp}</span>
-      </div>
-      <div style="font-size:.76rem;color:#8f9ec2;margin-bottom:6px">${c[3]} • ${c[4]} • ${c[5]}</div>
-      ${c[0]==="s2new"?`<select style="width:100%;margin-bottom:6px" onchange="st.s2new.ct=this.value;draw();calc()">
-        <option ${s.ct==="Beam"?"selected":""}>Beam</option><option ${s.ct==="Ion"?"selected":""}>Ion</option><option ${s.ct==="Kinetic"?"selected":""}>Kinetic</option>
-      </select>`:""}
-      <select style="width:100%" onchange="st['${c[0]}'].star=+this.value;calc()">
-        ${STARS.map((x,i)=>`<option value="${i}" ${s.star===i?'selected':''}>Star: ${x[0]}</option>`).join("")}
-      </select>
-      <div class="sk">${[0,1,2,3].map(i=>`<div>S${i+1}<input type="number" min="0" max="20" value="${s.s[i]}" onchange="st['${c[0]}'].s[${i}]=+this.value;calc()"></div>`).join("")}</div>
-    </div>`;
+  let h="";
+  D.forEach(x=>{
+    let s=S[x[0]],tp=x[0]=="s2"?s.t:x[2],p=s.p||0;
+    if(F!="All"&&tp!=F)return;
+    let co=C.map((v,i)=>'<option value="'+i+'"'+(s.c==i?' selected':'')+'>'+v[0]+'</option>').join("");
+    let po=P.map((v,i)=>'<option value="'+i+'"'+(p==i?' selected':'')+'>'+v[0]+'</option>').join("");
+    let cs=x[0]=="s2"?'<select style="width:100%;margin-bottom:5px" onchange="S.s2.t=this.value;draw();calc()"><option'+(s.t=="Beam"?" selected":"")+'>Beam</option><option'+(s.t=="Ion"?" selected":"")+'>Ion</option><option'+(s.t=="Kinetic"?" selected":"")+'>Kinetic</option></select>':'';
+    let sk=[0,1,2,3].map(i=>'<div>S'+(i+1)+'<input type="number" min="0" max="20" value="'+s.s[i]+'" onchange="S[\''+x[0]+'\'].s['+i+']=+this.value;calc()"></div>').join("");
+    h+='<div class="c'+(s.o?' on':'')+'"><div class="r" style="justify-content:space-between"><b><input type="checkbox"'+(s.o?' checked':'')+' onchange="S[\''+x[0]+'\'].o=this.checked;draw();calc()"> '+x[1]+'</b><span class="tg '+tp+'">'+tp+'</span></div><div style="font-size:.74rem;color:#8f9ec2;margin-bottom:5px">'+x[3]+' • '+x[4]+' • '+x[5]+'</div>'+cs+'<div class="tr"><select onchange="S[\''+x[0]+'\'].c=+this.value;calc()">'+co+'</select><select onchange="S[\''+x[0]+'\'].p=+this.value;calc()">'+po+'</select></div><div class="sk">'+sk+'</div></div>';
   });
+  ls.innerHTML=h;
 }
 function calc(){
-  const ship=document.getElementById("ship").value,mode=document.getElementById("mode").value,out=document.getElementById("out");
-  out.innerHTML="";
+  let h="";
   ["Beam","Ion","Kinetic"].forEach(tp=>{
-    const pick=DATA.map(c=>{
-      const s=st[c[0]],ctp=c[0]==="s2new"?s.ct:c[2];
-      if(!s.on)return null;
-      const sk=1+(s.s[0]*.45+s.s[1]*.25+s.s[2]*.18+(s.star>=4?s.s[3]:s.s[3]*.35)*.12)*.085;
-      let sc=c[7]*STARS[s.star][1]*sk+(mode==="sustain"?c[8]*STARS[s.star][1]:c[8]*.25);
-      if(ship==="Gram"&&c[4]==="INT")sc*=1.12;
-      if((ship==="Opportunity"||ship==="Demerzel")&&c[4]==="ATK")sc*=1.12;
-      if(ctp===tp)sc*=1.38;
-      return{c,tp:ctp,sc:Math.round(sc)};
-    }).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,3).sort((a,b)=>a.c[6]-b.c[6]);
-    const m=pick.filter(x=>x.tp===tp).length;
-    out.innerHTML+=`<div class="fleet ${tp}">
-      <div class="row" style="justify-content:space-between;margin:0">
-        <b>${tp} Fleet</b><span style="font-size:.75rem;color:#34d399">${m===3?"+20% Resonance":m===2?"+10% Resonance":"0% Resonance"}</span>
-      </div>
-      ${pick.length?pick.map((x,i)=>`<div class="slot"><div class="num">${i+1}</div><div style="flex:1"><b>${x.c[1]}</b><div style="font-size:.75rem;color:#8f9ec2">${STARS[st[x.c[0]].star][0]} • ${x.c[5]}</div></div><b style="color:#facc15">⚡${x.sc}</b></div>`).join(""):`<p style="font-size:.82rem;color:#8f9ec2">Select owned heroes below.</p>`}
-    </div>`;
+    let pk=D.map(x=>{
+      let s=S[x[0]],ct=x[0]=="s2"?s.t:x[2],p=s.p||0;
+      if(!s.o)return null;
+      let tm=C[s.c][1]*P[p][1],aw=s.c>=5||(s.c==4&&p==4);
+      let sk=1+(s.s[0]*.45+s.s[1]*.25+s.s[2]*.18+(aw?s.s[3]:s.s[3]*.35)*.12)*.085;
+      let sc=x[7]*tm*sk+(mode.value=="sustain"?x[8]*tm:x[8]*.25);
+      if(ship.value=="Gram"&&x[4]=="INT")sc*=1.12;
+      if((ship.value=="Opportunity"||ship.value=="Demerzel")&&x[4]=="ATK")sc*=1.12;
+      if(ct==tp)sc*=1.38;
+      return{x:x,ct:ct,sc:Math.round(sc),lb:C[s.c][0]+" "+P[p][0]};
+    }).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,3).sort((a,b)=>a.x[6]-b.x[6]);
+    let m=pk.filter(v=>v.ct==tp).length,rs=m==3?"+20% Res":m==2?"+10% Res":"0% Res";
+    let sl=pk.length?pk.map((v,i)=>'<div class="sl"><div class="n">'+(i+1)+'</div><div style="flex:1"><b>'+v.x[1]+'</b><div style="font-size:.72rem;color:#8f9ec2">'+v.lb+' • '+v.x[5]+'</div></div><b style="color:#facc15">⚡'+v.sc+'</b></div>').join(""):'<p style="font-size:.8rem;color:#8f9ec2">Select heroes below.</p>';
+    h+='<div class="f '+tp+'"><div class="r" style="justify-content:space-between;margin:0"><b>'+tp+' Fleet</b><span style="font-size:.74rem;color:#34d399">'+rs+'</span></div>'+sl+'</div>';
   });
+  out.innerHTML=h;
 }
-function filt(t,b){cur=t;document.querySelectorAll("#tabs button").forEach(x=>x.className="");b.className="btn-b";draw();}
-function preset(p){
-  DATA.forEach(c=>{
-    if(p==="reset")st[c[0]].on=false;
-    if(p==="f2p"){st[c[0]].on=c[3]==="Epic";st[c[0]].star=2;st[c[0]].s=[10,8,8,1];}
-    if(p==="max"){st[c[0]].on=c[0]!=="s2new";st[c[0]].star=5;st[c[0]].s=[15,15,15,15];}
-  });draw();calc();
-}
-function save(){localStorage.setItem("fgf_opt",JSON.stringify({st,ship:ship.value,mode:mode.value}));alert("Roster Saved!");}
-function load(n){const d=JSON.parse(localStorage.getItem("fgf_opt")||"null");if(!d)return;st=d.st;ship.value=d.ship;mode.value=d.mode;draw();calc();if(n)alert("Roster Loaded!");}
-load(0);draw();calc();
+function flt(t,b){F=t;document.querySelectorAll("#tb button").forEach(v=>v.className="");b.className="bl";draw();}
+function pre(p){D.forEach(x=>{if(p=="rst")S[x[0]].o=0;if(p=="f2p"){S[x[0]].o=x[3]=="Epic";S[x[0]].c=3;S[x[0]].p=4;S[x[0]].s=[10,8,8,1];}if(p=="max"){S[x[0]].o=x[0]!="s2";S[x[0]].c=6;S[x[0]].p=4;S[x[0]].s=[15,15,15,15];}});draw();calc();}
+function sv(){localStorage.setItem("fgf3",JSON.stringify({S:S,sh:ship.value,md:mode.value}));alert("Saved!");}
+function ld(n){let d=JSON.parse(localStorage.getItem("fgf3")||"null");if(!d)return;S=d.S;ship.value=d.sh;mode.value=d.md;draw();calc();if(n)alert("Loaded!");}
+ld(0);draw();calc();
 </script>
 </body>
 </html>
