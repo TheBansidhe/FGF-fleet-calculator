@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Foundation: Galactic Frontier — Space Fleet Optimizer</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --panel: #131a2a;
+    --panel-2: #1a2338;
+    --border: #283552;
+    --text: #e8eefc;
+    --muted: #8f9ec2;
+    --beam: #38bdf8;
+    --ion: #c084fc;
+    --kinetic: #fb923c;
+    --gold: #facc15;
+    --green: #34d399;
+    --red: #f87171;
+  }
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--text); padding: 16px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { margin: 0 0 6px; font-size: 1.6rem; letter-spacing: 0.5px; }
+  .subtitle { color: var(--muted); font-size: 0.92rem; margin: 0; }
+
+  .controls-bar {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 20px;
+  }
+  .control-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  label.lbl { font-size: 0.82rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+  select, button, input[type="text"], input[type="number"] {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 0.9rem;
+  }
+  button { cursor: pointer; font-weight: 600; transition: 0.15s; }
+  button:hover { border-color: var(--beam); background: #222f4b; }
+  button.primary { background: #2563eb; border-color: #3b82f6; color: #fff; }
+  button.primary:hover { background: #1d4ed8; }
+  button.save-btn { background: #059669; border-color: #10b981; color: #fff; }
+  button.save-btn:hover { background: #047857; }
+  button.danger { border-color: #7f1d1d; color: var(--red); }
+
+  /* Results Section */
+  .results-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;
+  }
+  .fleet-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+    border-top: 4px solid var(--border);
+  }
+  .fleet-card.Beam { border-top-color: var(--beam); }
+  .fleet-card.Ion { border-top-color: var(--ion); }
+  .fleet-card.Kinetic { border-top-color: var(--kinetic); }
+  .fleet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .fleet-title { font-size: 1.15rem; font-weight: 700; }
+  .res-badge { font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; background: var(--panel-2); color: var(--green); border: 1px solid #1e3a3a; }
+
+  .slot-row {
+    display: flex; align-items: center; gap: 10px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px;
+  }
+  .slot-num {
+    width: 28px; height: 28px; border-radius: 50%; background: #2563eb; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+  }
+  .slot-info { flex: 1; }
+  .slot-name { font-weight: 700; font-size: 0.95rem; }
+  .slot-meta { font-size: 0.78rem; color: var(--muted); }
+  .slot-score { font-weight: 700; font-size: 0.85rem; color: var(--gold); }
+
+  /* Filter Tabs */
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab-btn.active { background: #2563eb; border-color: #3b82f6; color: #fff; }
+
+  /* Champions Grid */
+  .champ-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px;
+  }
+  .champ-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+    opacity: 0.55; transition: 0.15s;
+  }
+  .champ-card.owned { opacity: 1; border-color: #475569; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+  .champ-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .champ-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; }
+  .champ-check input { width: 18px; height: 18px; cursor: pointer; }
+  .tag { font-size: 0.72rem; padding: 2px 7px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+  .tag.Beam { background: rgba(56,189,248,0.15); color: var(--beam); }
+  .tag.Ion { background: rgba(192,132,252,0.15); color: var(--ion); }
+  .tag.Kinetic { background: rgba(251,146,60,0.15); color: var(--kinetic); }
+  .champ-role { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; }
+
+  .inputs-row { display: flex; flex-direction: column; gap: 8px; }
+  .star-select { width: 100%; padding: 6px 8px; font-size: 0.85rem; }
+  .skills-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .skill-box { display: flex; flex-direction: column; align-items: center; }
+  .skill-box span { font-size: 0.68rem; color: var(--muted); margin-bottom: 2px; }
+  .skill-box input { width: 100%; padding: 5px 4px; text-align: center; font-size: 0.85rem; }
+
+  .toast {
+    position: fixed; bottom: 20px; right: 20px; background: #059669; color: #fff;
+    padding: 10px 16px; border-radius: 8px; font-weight: 600; display: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Foundation: Galactic Frontier — Space Fleet Optimizer</h1>
+    <p class="subtitle">Check the champions you own, set their Star Tier &amp; 4 Space Skill Levels, and get your optimal Beam, Ion &amp; Kinetic lineups.</p>
+  </header>
+
+  <div class="controls-bar">
+    <div class="control-group">
+      <label class="lbl">Flagship:</label>
+      <select id="flagshipSelect" onchange="calculateFleets()">
+        <option value="Gram">Gram (INT &amp; Sustain Focus)</option>
+        <option value="Opportunity">Opportunity (ATK &amp; Burst Focus)</option>
+        <option value="Demerzel">Demerzel (ATK &amp; PvP Debuff Focus)</option>
+        <option value="Gungnir">Gungnir (Neutral / Base Stats)</option>
+      </select>
+
+      <label class="lbl">Strategy:</label>
+      <select id="strategySelect" onchange="calculateFleets()">
+        <option value="dps">Max DPS</option>
+        <option value="sustain">Balanced / Sustain</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <button onclick="applyPreset('f2p')">F2P Starter</button>
+      <button onclick="applyPreset('max')">All Maxed</button>
+      <button class="danger" onclick="applyPreset('reset')">Reset All</button>
+      <button class="save-btn" onclick="saveRoster()">Save Roster</button>
+      <button onclick="loadRoster(true)">Load Saved</button>
+    </div>
+  </div>
+
+  <!-- Optimal Lineups Output -->
+  <div class="results-grid" id="resultsGrid"></div>
+
+  <!-- Archetype Filter -->
+  <div class="filter-tabs">
+    <button class="tab-btn active" onclick="setFilter('All', this)">All Champions</button>
+    <button class="tab-btn" onclick="setFilter('Beam', this)">Beam</button>
+    <button class="tab-btn" onclick="setFilter('Ion', this)">Ion</button>
+    <button class="tab-btn" onclick="setFilter('Kinetic', this)">Kinetic</button>
+  </div>
+
+  <!-- Champions Roster Grid -->
+  <div class="champ-grid" id="champGrid"></div>
+</div>
+
+<div class="toast" id="toast">Roster saved to your browser!</div>
+
+<script>
+const STAR_TIERS = [
+  { label: "Blue", mult: 1.00 },
+  { label: "Purple", mult: 1.18 },
+  { label: "Yellow", mult: 1.38 },
+  { label: "Orange", mult: 1.62 },
+  { label: "Red (Awakened)", mult: 1.92 },
+  { label: "Rainbow / Prism", mult: 2.25 }
+];
+
+const CHAMPIONS = [
+  // BEAM
+  { id: "teresa", name: "Teresa Lopez", type: "Beam", rarity: "Legendary", stat: "INT", role: "Defense / Heal", slotPref: 3, basePower: 108, sustainBonus: 35 },
+  { id: "evan", name: "Evan Rogers", type: "Beam", rarity: "Legendary", stat: "ATK", role: "DPS Carry", slotPref: 3, basePower: 105, sustainBonus: 0 },
+  { id: "aliya", name: "Aliya", type: "Beam", rarity: "Legendary", stat: "ATK", role: "Slot-1 Buffer", slotPref: 1, basePower: 100, sustainBonus: 8 },
+  { id: "ramos", name: "Ramos Moai (S2)", type: "Beam", rarity: "Legendary", stat: "ATK", role: "Attack / Support", slotPref: 2, basePower: 104, sustainBonus: 10 },
+  { id: "doug", name: "Doug Rockwell", type: "Beam", rarity: "Legendary", stat: "INT", role: "Fleet Healer", slotPref: 3, basePower: 94, sustainBonus: 32 },
+  { id: "lucius", name: "Lucius Pullo", type: "Beam", rarity: "Epic", stat: "ATK", role: "Budget Attack", slotPref: 2, basePower: 74, sustainBonus: 0 },
+  { id: "klara", name: "Klara", type: "Beam", rarity: "Epic", stat: "INT", role: "Budget Healer", slotPref: 3, basePower: 72, sustainBonus: 22 },
+
+  // ION
+  { id: "ajita", name: "Ajita", type: "Ion", rarity: "Legendary", stat: "INT", role: "Support / Healer / Buffer", slotPref: 1, basePower: 110, sustainBonus: 34 },
+  { id: "lily", name: "Lily", type: "Ion", rarity: "Legendary", stat: "ATK", role: "Primary DPS Carry", slotPref: 3, basePower: 112, sustainBonus: 0 },
+  { id: "jodie", name: "Jodie Béart", type: "Ion", rarity: "Legendary", stat: "ATK", role: "Setup / Buffer", slotPref: 1, basePower: 102, sustainBonus: 6 },
+  { id: "kama", name: "Kama Moai", type: "Ion", rarity: "Epic", stat: "INT", role: "Budget INT DPS", slotPref: 2, basePower: 76, sustainBonus: 0 },
+  { id: "phade", name: "Phade", type: "Ion", rarity: "Epic", stat: "INT", role: "Budget Support", slotPref: 1, basePower: 70, sustainBonus: 18 },
+
+  // KINETIC
+  { id: "zora", name: "Zora Domini", type: "Kinetic", rarity: "Legendary", stat: "INT", role: "Primary DPS Carry", slotPref: 3, basePower: 114, sustainBonus: 5 },
+  { id: "killerbee", name: "Killer Bee", type: "Kinetic", rarity: "Legendary", stat: "ATK", role: "DPS / Self-Sustain", slotPref: 2, basePower: 106, sustainBonus: 14 },
