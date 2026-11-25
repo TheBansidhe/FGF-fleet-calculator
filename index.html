@@ -28,7 +28,7 @@ button{font-weight:700}
 </head>
 <body>
 <div class="w">
-<h1>FGF Space Fleet Optimizer (v6)</h1>
+<h1>FGF Space Fleet Optimizer (v7)</h1>
 <div class="b">
   <div class="r">
     <select id="ship" onchange="calc()">
@@ -61,13 +61,13 @@ button{font-weight:700}
 </div>
 <script>
 const C_NAME="Green,Yellow,Orange,Red,Purple Prism,Aqua Prism".split(",");
-const C_MULT="0.85,1.12,1.42,1.76,2.15,2.55".split(",").map(Number);
+const C_MULT="0.90,1.15,1.38,1.62,1.86,2.10".split(",").map(Number);
 const P_NAME="1★,2★,3★,4★,5★".split(",");
-const P_MULT="1,1.06,1.12,1.18,1.26".split(",").map(Number);
-const RAW="teresa|Teresa Lopez|Beam|Leg|INT|Def/Heal|3|108|35;evan|Evan Rogers|Beam|Leg|ATK|DPS Carry|3|105|0;aliya|Aliya|Beam|Leg|ATK|Slot-1 Buff|1|104|8;ramos|Ramos Moai (S2)|Beam|Leg|ATK|Atk/Supp|2|104|10;doug|Doug Rockwell|Beam|Leg|INT|Healer|3|94|32;lucius|Lucius Pullo|Beam|Epic|ATK|Budget DPS|2|74|0;klara|Klara|Beam|Epic|INT|Budget Heal|3|72|22;ajita|Ajita|Ion|Leg|INT|Supp/Heal|1|112|34;lily|Lily|Ion|Leg|ATK|DPS Carry|3|114|0;jodie|Jodie Béart|Ion|Leg|ATK|Setup/Buff|1|105|6;kama|Kama Moai|Ion|Epic|INT|Budget DPS|2|76|0;phade|Phade|Ion|Epic|INT|Budget Supp|1|70|18;zora|Zora Domini|Kinetic|Leg|INT|DPS Carry|3|116|5;bee|Killer Bee|Kinetic|Leg|ATK|DPS/Sustain|2|106|14;eva|Eva von Trier|Kinetic|Leg|INT|Setup/Debuff|1|112|12;cocoon|Cocoon|Kinetic|Leg|INT|Def/Shield|2|96|36;riian|Riian Dessos|Kinetic|Epic|ATK|Budget DPS|2|73|0;lani|Lani Verita|Kinetic|Epic|ATK|Budget Atk|2|71|0;s2|S2 Banner Hero|Kinetic|Leg|ATK|Custom S2|2|108|12";
+const P_MULT="1,1.05,1.10,1.15,1.22".split(",").map(Number);
+const RAW="teresa|Teresa Lopez|Beam|Leg|INT|Def/Heal|3|136|42;evan|Evan Rogers|Beam|Leg|ATK|DPS Carry|3|134|0;aliya|Aliya|Beam|Leg|ATK|Slot-1 Buff|1|130|10;ramos|Ramos Moai (S2)|Beam|Leg|ATK|Atk/Supp|2|132|12;doug|Doug Rockwell|Beam|Leg|INT|Healer|3|122|38;lucius|Lucius Pullo|Beam|Epic|ATK|Budget DPS|2|68|0;klara|Klara|Beam|Epic|INT|Budget Heal|3|65|22;ajita|Ajita|Ion|Leg|INT|Supp/Heal|1|140|40;lily|Lily|Ion|Leg|ATK|DPS Carry|2|144|0;jodie|Jodie Béart|Ion|Leg|ATK|Setup/Buff|1|134|8;kama|Kama Moai|Ion|Epic|INT|Budget DPS|3|72|0;phade|Phade|Ion|Epic|INT|Budget Supp|1|60|16;zora|Zora Domini|Kinetic|Leg|INT|DPS Carry|3|145|6;bee|Killer Bee|Kinetic|Leg|ATK|DPS/Sustain|2|135|16;eva|Eva von Trier|Kinetic|Leg|INT|Setup/Debuff|1|138|14;cocoon|Cocoon|Kinetic|Leg|INT|Def/Shield|2|126|44;riian|Riian Dessos|Kinetic|Epic|ATK|Budget DPS|2|67|0;lani|Lani Verita|Kinetic|Epic|ATK|Budget Atk|2|65|0;s2|S2 Banner Hero|Kinetic|Leg|ATK|Custom S2|2|136|14";
 const D=RAW.split(";").map(r=>{let a=r.split("|");return{id:a.at(0),nm:a.at(1),tp:a.at(2),rr:a.at(3),st:a.at(4),rl:a.at(5),sl:+a.at(6),pw:+a.at(7),sb:+a.at(8)};});
 let S={},F="All";
-D.forEach(x=>{S[x.id]={o:x.rr=="Epic",c:x.rr=="Epic"?1:2,p:2,s1:8,s2:6,s3:5,s4:1,t:x.tp};});
+D.forEach(x=>{S[x.id]={o:x.rr=="Epic",c:x.rr=="Epic"?1:2,p:2,s1:10,s2:8,s3:6,s4:0,t:x.tp};});
 function setV(id,k,v){S[id][k]=v;if(k=="o"||k=="t")draw();calc();}
 function draw(){
   let h="";
@@ -77,7 +77,7 @@ function draw(){
     let co=C_NAME.map((v,i)=>'<option value="'+i+'"'+(cIdx==i?' selected':'')+'>'+v+'</option>').join("");
     let po=P_NAME.map((v,i)=>'<option value="'+i+'"'+(p==i?' selected':'')+'>'+v+'</option>').join("");
     let cs=x.id=="s2"?'<select style="width:100%;margin-bottom:5px" onchange="setV(\'s2\',\'t\',this.value)"><option'+(s.t=="Beam"?" selected":"")+'>Beam</option><option'+(s.t=="Ion"?" selected":"")+'>Ion</option><option'+(s.t=="Kinetic"?" selected":"")+'>Kinetic</option></select>':'';
-    h+='<div class="c'+(s.o?' on':'')+'"><div class="r" style="justify-content:space-between"><b><input type="checkbox"'+(s.o?' checked':'')+' onchange="setV(\''+x.id+'\',\'o\',this.checked)"> '+x.nm+'</b><span class="tg '+tp+'">'+tp+'</span></div><div style="font-size:.74rem;color:#8f9ec2;margin-bottom:5px">'+x.rr+' • '+x.st+' • '+x.rl+'</div>'+cs+'<div class="tr"><select onchange="setV(\''+x.id+'\',\'c\',+this.value)">'+co+'</select><select onchange="setV(\''+x.id+'\',\'p\',+this.value)">'+po+'</select></div><div class="sk"><div>S1<input type="number" min="1" max="20" value="'+s.s1+'" onchange="setV(\''+x.id+'\',\'s1\',+this.value)"></div><div>S2<input type="number" min="1" max="20" value="'+s.s2+'" onchange="setV(\''+x.id+'\',\'s2\',+this.value)"></div><div>S3<input type="number" min="1" max="20" value="'+s.s3+'" onchange="setV(\''+x.id+'\',\'s3\',+this.value)"></div><div>S4<input type="number" min="0" max="20" value="'+s.s4+'" onchange="setV(\''+x.id+'\',\'s4\',+this.value)"></div></div></div>';
+    h+='<div class="c'+(s.o?' on':'')+'"><div class="r" style="justify-content:space-between"><b><input type="checkbox"'+(s.o?' checked':'')+' onchange="setV(\''+x.id+'\',\'o\',this.checked)"> '+x.nm+'</b><span class="tg '+tp+'">'+tp+'</span></div><div style="font-size:.74rem;color:#8f9ec2;margin-bottom:5px">'+x.rr+' • '+x.st+' • '+x.rl+'</div>'+cs+'<div class="tr"><select onchange="setV(\''+x.id+'\',\'c\',+this.value)">'+co+'</select><select onchange="setV(\''+x.id+'\',\'p\',+this.value)">'+po+'</select></div><div class="sk"><div>S1<input type="number" min="0" max="40" value="'+s.s1+'" onchange="setV(\''+x.id+'\',\'s1\',+this.value)"></div><div>S2<input type="number" min="0" max="40" value="'+s.s2+'" onchange="setV(\''+x.id+'\',\'s2\',+this.value)"></div><div>S3<input type="number" min="0" max="40" value="'+s.s3+'" onchange="setV(\''+x.id+'\',\'s3\',+this.value)"></div><div>S4<input type="number" min="0" max="40" value="'+s.s4+'" onchange="setV(\''+x.id+'\',\'s4\',+this.value)"></div></div></div>';
   });
   ls.innerHTML=h;
 }
@@ -87,9 +87,10 @@ function calc(){
     let pk=D.map(x=>{
       let s=S[x.id],ct=x.id=="s2"?s.t:x.tp,p=s.p||0,cIdx=Math.min(s.c,5);
       if(!s.o||ct!=tp)return null;
-      let tm=C_MULT.at(cIdx)*P_MULT.at(p),aw=cIdx>=4||(cIdx==3&&p==4);
-      let sk=1+(s.s1*.45+s.s2*.25+s.s3*.18+(aw?s.s4:s.s4*.35)*.12)*.085;
-      let sc=x.pw*tm*sk+(mode.value=="sustain"?x.sb*tm:x.sb*.22);
+      let tm=C_MULT.at(cIdx)*P_MULT.at(p);
+      let skRate=x.rr=="Leg"?0.048:0.032;
+      let sk=1+(s.s1*.45+s.s2*.25+s.s3*.18+s.s4*.12)*skRate;
+      let sc=x.pw*tm*sk+(mode.value=="sustain"?x.sb*tm:x.sb*.2);
       if(x.id=="eva"&&S.zora&&S.zora.o)sc*=1.18;
       if(x.id=="zora"&&S.eva&&S.eva.o)sc*=1.12;
       if(x.id=="aliya"&&S.evan&&S.evan.o)sc*=1.14;
@@ -105,9 +106,9 @@ function calc(){
   out.innerHTML=h;
 }
 function flt(t,b){F=t;document.querySelectorAll("#tb button").forEach(v=>v.className="");b.className="bl";draw();}
-function pre(p){D.forEach(x=>{let s=S[x.id];if(p=="rst")s.o=0;if(p=="f2p"){s.o=x.rr=="Epic";s.c=1;s.p=4;s.s1=10;s.s2=8;s.s3=8;s.s4=1;}if(p=="max"){s.o=x.id!="s2";s.c=5;s.p=4;s.s1=15;s.s2=15;s.s3=15;s.s4=15;}});draw();calc();}
-function sv(){localStorage.setItem("fgf6",JSON.stringify({S:S,sh:ship.value,md:mode.value}));alert("Saved!");}
-function ld(n){let d=JSON.parse(localStorage.getItem("fgf6")||"null");if(!d)return;S=d.S;ship.value=d.sh;mode.value=d.md;draw();calc();if(n)alert("Loaded!");}
+function pre(p){D.forEach(x=>{let s=S[x.id];if(p=="rst")s.o=0;if(p=="f2p"){s.o=x.rr=="Epic";s.c=1;s.p=4;s.s1=15;s.s2=15;s.s3=15;s.s4=0;}if(p=="max"){s.o=x.id!="s2";s.c=5;s.p=4;s.s1=30;s.s2=30;s.s3=30;s.s4=30;}});draw();calc();}
+function sv(){localStorage.setItem("fgf7",JSON.stringify({S:S,sh:ship.value,md:mode.value}));alert("Saved!");}
+function ld(n){let d=JSON.parse(localStorage.getItem("fgf7")||"null");if(!d)return;S=d.S;ship.value=d.sh;mode.value=d.md;draw();calc();if(n)alert("Loaded!");}
 ld(0);draw();calc();
 </script>
 </body>
